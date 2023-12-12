@@ -1,15 +1,15 @@
 package frc.robot;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-
-import frc.robot.autos.*;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+import frc.robot.autos.exampleAuto;
+import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.Swerve;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,9 +39,9 @@ public class RobotContainer {
         s_Swerve.setDefaultCommand(
             new TeleopSwerve(
                 s_Swerve, 
-                () -> -driver.getRawAxis(translationAxis), 
-                () -> -driver.getRawAxis(strafeAxis), 
-                () -> -driver.getRawAxis(rotationAxis), 
+                () -> -modifyAxis(driver.getRawAxis(translationAxis), s_Swerve.yLimiter), 
+                () -> -modifyAxis(driver.getRawAxis(strafeAxis), s_Swerve.xLimiter), 
+                () -> -modifyAxis(driver.getRawAxis(rotationAxis), s_Swerve.turnLimiter), 
                 () -> robotCentric.getAsBoolean()
             )
         );
@@ -70,4 +70,25 @@ public class RobotContainer {
         // An ExampleCommand will run in autonomous
         return new exampleAuto(s_Swerve);
     }
+    private double deadband(double value, double deadband) {
+        if (Math.abs(value) > deadband) {
+          if (value > 0.0) {
+            return (value - deadband) / (1.0 - deadband);
+          } else {
+            return (value + deadband) / (1.0 - deadband);
+          }
+        } else {
+          return 0.0;
+        }
+      }
+
+    public double modifyAxis(double value, SlewRateLimiter limiter) {
+        // Deadband
+        value = deadband(value, 0.05);
+    
+        // Square the axis
+        value = limiter.calculate(Math.copySign(value * value, value));
+    
+        return value;
+      }
 }
