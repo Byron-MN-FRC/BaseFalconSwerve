@@ -77,9 +77,9 @@ public final class Constants {
        // public static final double driveKS = (0.32 / 12); //TODO: This must be tuned to specific robot - changed see below
        // public static final double driveKV = (1.51 / 12);
        // public static final double driveKA = (0.27 / 12);
-        public static final double driveKS = (0.127957 / 12);
-        public static final double driveKV = (2.7805 / 12);
-        public static final double driveKA = (0.31875 / 12);
+        public static final double driveKS = (0.18978 / 12);
+        public static final double driveKV = (2.8428 / 12);
+        public static final double driveKA = (0.068797 / 12);
         /* Swerve Profiling Values */
         /** Meters per Second */
         // public static final double maxSpeed = 4.5; //TODO: This must be tuned to specific robot - changed see below
